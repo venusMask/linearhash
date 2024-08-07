@@ -3,6 +3,8 @@ package org.venus.linearhash;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.venus.linearhash.store.Bucket;
+import org.venus.linearhash.store.MemoryDataBucket;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,32 +15,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 public class LinearHash<KeyT, ValueT> {
 
-    private static final Logger logger = LoggerFactory.getLogger(LinearHash.class);
+    // private static final Logger logger = LoggerFactory.getLogger(LinearHash.class);
 
     private final MetaData<KeyT> metaData;
-
-    private final Integer maxCapacity;
-
-    private final Integer minCapacity;
 
     private final AtomicInteger assignBucketAssigner = new AtomicInteger(0);
 
     private final List<Bucket<KeyT, ValueT>> buckets;
 
-    public LinearHash(Integer maxCapacity,
-                      Integer minCapacity,
-                      Integer initBuckets,
-                      HashFunction<KeyT> hashFunction) {
-        this.maxCapacity = maxCapacity;
-        this.minCapacity = minCapacity;
+    public LinearHash(Integer initBuckets, HashFunction<KeyT> hashFunction) {
         this.metaData = new MetaData<>(hashFunction, MathUtil.powOf2(initBuckets));
         buckets = new ArrayList<>();
         initBuckets();
     }
 
-    private Bucket<KeyT, ValueT> createNewBucket() {
+    private MemoryDataBucket<KeyT, ValueT> createNewBucket() {
         int bucketID = assignBucketAssigner.getAndIncrement();
-        return new Bucket<>(bucketID, maxCapacity, minCapacity);
+        return new MemoryDataBucket<>(bucketID);
     }
 
     private void initBuckets() {
@@ -47,12 +40,33 @@ public class LinearHash<KeyT, ValueT> {
         }
     }
 
-    public void add(KeyT key, ValueT value) {
+    /**
+     * Get Value
+     */
+    public ValueT get(KeyT key) {
         int bucketIndex = metaData.getBucketIndex(key);
         Bucket<KeyT, ValueT> bucket = buckets.get(bucketIndex);
-        boolean splitFlag = bucket.add(key, value);
-        // 需要进行分裂
-        if(splitFlag) {
+        return bucket.get(key);
+    }
+
+    /**
+     * Remove Key
+     */
+    public void remove(KeyT key) {
+        int bucketIndex = metaData.getBucketIndex(key);
+        Bucket<KeyT, ValueT> bucket = buckets.get(bucketIndex);
+        bucket.remove(key);
+    }
+
+    /**
+     * Put (Key, Value)
+     */
+    public void put(KeyT key, ValueT value) {
+        int bucketIndex = metaData.getBucketIndex(key);
+        Bucket<KeyT, ValueT> bucket = buckets.get(bucketIndex);
+        bucket.put(key, value);
+        metaData.addNumKey();
+        if(metaData.mayBeSplit()) {
             addNewBucket();
             split();
         }
@@ -65,13 +79,13 @@ public class LinearHash<KeyT, ValueT> {
         Integer splitBucketIndex = metaData.getSplitBucketIndex();
         Bucket<KeyT, ValueT> needSplit = buckets.get(metaData.getSplitBucketIndex());
         metaData.split();
-        Map<KeyT, ValueT> data = needSplit.getData();
+        Map<KeyT, ValueT> data = (Map<KeyT, ValueT>) needSplit.getBucketData();
         for (Map.Entry<KeyT, ValueT> entry : data.entrySet()) {
             KeyT key = entry.getKey();
             int newBucketIndex = metaData.getBucketIndex(key);
             if (newBucketIndex != splitBucketIndex) {
-                needSplit.delete(key);
-                buckets.get(newBucketIndex).add(entry);
+                needSplit.remove(key);
+                buckets.get(newBucketIndex).put(key, entry.getValue());
             }
         }
     }

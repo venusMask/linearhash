@@ -29,12 +29,12 @@ public class LinearHashTest extends TestCase {
     public void put(LinearHash<String, String> linearHash, int times) {
         for (int i = 0; i < times; i++) {
             String key = generateRandomString(1, 10);
-            linearHash.add(key, key);
+            linearHash.put(key, key);
         }
     }
 
     public void testLinearHash() {
-        LinearHash<String, String> linearHash = new LinearHash<>(4, 1, 1, Objects::hashCode);
+        LinearHash<String, String> linearHash = new LinearHash<>(1, Objects::hashCode);
         put(linearHash, 100);
         int a = 1 + 1;
     }

@@ -4,15 +4,19 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @Author venus
- * @Date 2024/8/6
- * @Version 1.0
- */
+import java.util.concurrent.atomic.AtomicLong;
+
 @Getter
 public class MetaData<KeyT> {
 
     private final static Logger logger = LoggerFactory.getLogger(MetaData.class);
+
+    private final Configuration configuration = Configuration.getInstance();
+
+    // 记录数量
+    private final AtomicLong numKeys = new AtomicLong(0L);
+
+    private final AtomicLong bucketNum = new AtomicLong(0L);
 
     private final HashFunction<KeyT> hashFunction;
 
@@ -20,13 +24,11 @@ public class MetaData<KeyT> {
 
     private final Integer initBuckets;
 
-    private Integer bucketNumber;
-
     private Integer splitBucketIndex = 0;
 
     public MetaData(HashFunction<KeyT> hashFunction, Integer initBuckets) {
         this.hashFunction = hashFunction;
-        this.bucketNumber = initBuckets;
+        bucketNum.set(initBuckets);
         this.initBuckets = initBuckets;
         this.roundTimes = 0;
     }
@@ -51,7 +53,7 @@ public class MetaData<KeyT> {
     }
 
     public void split() {
-        bucketNumber++;
+        bucketNum.getAndIncrement();
         splitBucketIndex++;
         if(initBuckets == 1) {
             splitWithOne();
@@ -77,10 +79,23 @@ public class MetaData<KeyT> {
 
     private void splitWithNon() {
         logger.debug("初始化桶数不为1, 使用splitWithNon计算.");
-        int newRoundTimes = (int) Math.floor(Math.log((double) bucketNumber / initBuckets) / Math.log(2));
+        int newRoundTimes = (int) Math.floor(Math.log((double) bucketNum.get() / initBuckets) / Math.log(2));
         if(newRoundTimes > roundTimes) {
             roundIncrement();
         }
+    }
+
+    public void addNumKey() {
+        numKeys.getAndIncrement();
+    }
+
+    /**
+     * Controlled Split.
+     * 当元素的总数达到总容量的阈值时才进行分裂.
+     */
+    public boolean mayBeSplit() {
+        long maxCap = bucketNum.get() * configuration.getMaxBucketCap();
+        return (numKeys.get() * 1.0 / maxCap) > configuration.getLoadFactory();
     }
 
 }

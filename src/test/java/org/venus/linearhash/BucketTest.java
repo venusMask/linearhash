@@ -1,6 +1,7 @@
 package org.venus.linearhash;
 
 import junit.framework.TestCase;
+import org.venus.linearhash.store.MemoryDataBucket;
 
 /**
  * @Author venus
@@ -10,9 +11,9 @@ import junit.framework.TestCase;
 public class BucketTest extends TestCase {
 
     public void testBucket() {
-        Bucket<Integer, String> bucket = new Bucket<>(1, 8, 2);
+        MemoryDataBucket<Integer, String> bucket = new MemoryDataBucket<>(1);
         for (int i = 0; i < 10; i++) {
-            boolean flag = bucket.add(i, "A" + i);
+            boolean flag = bucket.put(i, "A" + i);
             System.out.println(flag);
         }
     }
