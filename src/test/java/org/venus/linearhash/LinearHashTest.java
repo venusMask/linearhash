@@ -1,6 +1,7 @@
 package org.venus.linearhash;
 
 import junit.framework.TestCase;
+import org.venus.linearhash.core.LinearHash;
 
 import java.util.Objects;
 import java.util.Random;
@@ -34,7 +35,7 @@ public class LinearHashTest extends TestCase {
     }
 
     public void testLinearHash() {
-        LinearHash<String, String> linearHash = new LinearHash<>(1, Objects::hashCode);
+        LinearHash<String, String> linearHash = new LinearHash<>();
         put(linearHash, 100);
         int a = 1 + 1;
     }

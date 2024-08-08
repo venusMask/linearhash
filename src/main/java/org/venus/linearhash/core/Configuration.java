@@ -1,4 +1,4 @@
-package org.venus.linearhash;
+package org.venus.linearhash.core;
 
 import lombok.Getter;
 
@@ -22,6 +22,8 @@ public class Configuration {
     private Double loadFactory = 0.75d;
 
     private Integer overflowPoolSize = 8;
+
+    private Integer initBuckets = 1;
 
     private Configuration() {}
 

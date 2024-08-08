@@ -1,7 +1,7 @@
 package org.venus.linearhash.store;
 
-import org.venus.linearhash.Configuration;
-import org.venus.linearhash.core.Context;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Bucket
@@ -11,8 +11,6 @@ import org.venus.linearhash.core.Context;
  * @Version 1.0
  */
 public interface Bucket<KeyT, ValueT> {
-
-    Configuration configuration = Configuration.getInstance();
 
     /**
      * Add Pair
@@ -34,6 +32,12 @@ public interface Bucket<KeyT, ValueT> {
      */
     void clearAll();
 
-    Object getBucketData();
+    Iterator<Map.Entry<KeyT, ValueT>> getBucketData();
+
+    Bucket<KeyT, ValueT> splitBucket();
+
+    OverflowPage<KeyT, ValueT> getPage();
+
+    Integer getBucketID();
 
 }

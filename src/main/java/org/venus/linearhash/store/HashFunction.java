@@ -1,4 +1,4 @@
-package org.venus.linearhash;
+package org.venus.linearhash.store;
 
 @FunctionalInterface
 public interface HashFunction<KeyT> {

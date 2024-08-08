@@ -1,4 +1,4 @@
-package org.venus.linearhash;
+package org.venus.linearhash.util;
 
 /**
  * @Author venus
@@ -13,10 +13,5 @@ public class MathUtil {
         }
         return number;
     }
-
-    public static void main(String[] args) {
-        System.out.println(powOf2(2));
-    }
-
 
 }

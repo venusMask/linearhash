@@ -73,7 +73,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.venus.linearhash.LinearHash</mainClass>
+              <mainClass>org.venus.linearhash.core.LinearHash</mainClass>
             </manifest>
           </archive>
         </configuration>

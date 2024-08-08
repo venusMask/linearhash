@@ -1,6 +1,7 @@
 package org.venus.linearhash.store;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -11,11 +12,11 @@ import java.util.Map;
  * @Date 2024/8/7
  * @Version 1.0
  */
-public class MemoryOverflowPage<KeyT, ValueT> implements OverflowPage<KeyT, ValueT> {
+public class MemoryPage<KeyT, ValueT> extends AbstractPage<KeyT, ValueT> {
 
     private final Map<KeyT, ValueT> overFlowData;
 
-    public MemoryOverflowPage(){
+    public MemoryPage(){
         overFlowData = new HashMap<>();
     }
 
@@ -42,8 +43,7 @@ public class MemoryOverflowPage<KeyT, ValueT> implements OverflowPage<KeyT, Valu
     }
 
     @Override
-    public Object getBucketData() {
-        return null;
+    public Iterator<Map.Entry<KeyT, ValueT>> getBucketData() {
+        return overFlowData.entrySet().iterator();
     }
-
 }
