@@ -1,5 +1,6 @@
 package org.venus.linearhash;
 
+import org.venus.linearhash.args.Argument;
 import org.venus.linearhash.core.Context;
 import org.venus.linearhash.core.LinearHash;
 import org.venus.linearhash.store.HashFunction;
@@ -12,6 +13,9 @@ import org.venus.linearhash.store.HashFunction;
 public class App {
 
     public static void main(String[] args) {
+        Argument argument = new Argument();
+        argument.parse(args);
+        argument.parseConfig();
         HashFunction<String> hf = Object::hashCode;
         Context<String, String> context = Context.getInstance();
         context.setHashFunction(hf);

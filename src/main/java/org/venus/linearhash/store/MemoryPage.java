@@ -46,4 +46,14 @@ public class MemoryPage<KeyT, ValueT> extends AbstractPage<KeyT, ValueT> {
     public Iterator<Map.Entry<KeyT, ValueT>> getBucketData() {
         return overFlowData.entrySet().iterator();
     }
+
+    @Override
+    public long size() {
+        return overFlowData.size();
+    }
+
+    @Override
+    public String metric() {
+        return "Over flow data size: " + size();
+    }
 }

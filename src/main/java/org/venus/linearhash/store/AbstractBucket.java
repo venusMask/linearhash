@@ -49,7 +49,7 @@ public abstract class AbstractBucket<KeyT, ValueT> implements Bucket<KeyT, Value
     @Override
     public OverflowPage<KeyT, ValueT> getPage() {
         if (overflowPage == null) {
-            overflowPage = context.getOverflowPool().poll();
+            overflowPage = context.getOverflowPool().borrow();
         }
         return overflowPage;
     }
@@ -60,5 +60,11 @@ public abstract class AbstractBucket<KeyT, ValueT> implements Bucket<KeyT, Value
             bucketID = context.getBucketIDAssigner().getAndIncrement();
         }
         return bucketID;
+    }
+
+    @Override
+    public String metric() {
+        return String.format("Bucket id: %d, data size: %d, overflow page size: %d",
+                getBucketID(), size(), overflowPage == null ? 0 : getPage().size());
     }
 }

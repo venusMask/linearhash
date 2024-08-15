@@ -2,6 +2,7 @@ package org.venus.linearhash.store;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.venus.linearhash.core.CombineIterator;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,20 +50,16 @@ public class MemoryBucket<KeyT, ValueT> extends AbstractBucket<KeyT, ValueT> {
 
     @Override
     public Iterator<Map.Entry<KeyT, ValueT>> getBucketData() {
-        return new Iterator<Map.Entry<KeyT, ValueT>>() {
+        Iterator<Map.Entry<KeyT, ValueT>> first = bucketData.entrySet().iterator();
+        Iterator<Map.Entry<KeyT, ValueT>> second = null;
+        if(getPage() != null) {
+            second = getPage().getBucketData();
+        }
+        return new CombineIterator<>(first, second);
+    }
 
-            @Override
-            public boolean hasNext() {
-                return getBucketData().hasNext() && getPage().getBucketData().hasNext();
-            }
-
-            @Override
-            public Map.Entry<KeyT, ValueT> next() {
-                if(getBucketData().hasNext()) {
-                    return getBucketData().next();
-                }
-                return getPage().getBucketData().next();
-            }
-        };
+    @Override
+    public long size() {
+        return bucketData.size();
     }
 }

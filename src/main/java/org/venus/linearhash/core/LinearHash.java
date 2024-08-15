@@ -23,8 +23,6 @@ public class LinearHash<KeyT, ValueT> {
 
     private final Configuration configuration = context.getConfiguration();
 
-    private final AtomicInteger assignBucketAssigner = new AtomicInteger(0);
-
     private final List<Bucket<KeyT, ValueT>> buckets;
 
     public LinearHash() {
@@ -38,7 +36,7 @@ public class LinearHash<KeyT, ValueT> {
     }
 
     private MemoryBucket<KeyT, ValueT> createNewBucket() {
-        int bucketID = assignBucketAssigner.getAndIncrement();
+        int bucketID = context.getBucketIDAssigner().getAndIncrement();
         return new MemoryBucket<>(bucketID);
     }
 
@@ -80,6 +78,13 @@ public class LinearHash<KeyT, ValueT> {
             Bucket<KeyT, ValueT> newBucket = needSplitBucket.splitBucket();
             buckets.add(newBucket);
         }
+    }
+
+    public void metric() {
+        buckets.forEach(bucket -> {
+            String metric = bucket.metric();
+            System.out.println(metric);
+        });
     }
 
 }

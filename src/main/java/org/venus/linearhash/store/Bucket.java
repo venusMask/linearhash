@@ -40,4 +40,8 @@ public interface Bucket<KeyT, ValueT> {
 
     Integer getBucketID();
 
+    long size();
+
+    String metric();
+
 }

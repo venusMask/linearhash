@@ -1,9 +1,10 @@
 package org.venus.linearhash;
 
 import junit.framework.TestCase;
+import org.venus.linearhash.core.Context;
 import org.venus.linearhash.core.LinearHash;
+import org.venus.linearhash.store.HashFunction;
 
-import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Random;
  */
 public class LinearHashTest extends TestCase {
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     private String generateRandomString(int minLength, int maxLength) {
         String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -34,16 +35,13 @@ public class LinearHashTest extends TestCase {
         }
     }
 
-    public void testLinearHash() {
+    public void testPut() {
+        HashFunction<String> hf = Object::hashCode;
+        Context<String, String> context = Context.getInstance();
+        context.setHashFunction(hf);
         LinearHash<String, String> linearHash = new LinearHash<>();
         put(linearHash, 100);
-        int a = 1 + 1;
-    }
-
-
-
-    public void testMath() {
-        System.out.println(1 << 2);
+        linearHash.metric();
     }
 
 }
