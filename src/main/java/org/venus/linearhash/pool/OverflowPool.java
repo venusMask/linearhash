@@ -24,12 +24,7 @@ public class OverflowPool<KeyT, ValueT> {
             OverflowPage<KeyT, ValueT> overflowPage = pool.borrowObject();
             return overflowPage;
         } catch (Exception e) {
-            try {
-                pool.addObject();
-                return pool.borrowObject();
-            } catch (Exception ie) {
-                throw new RuntimeException("Pool Exception");
-            }
+            throw new RuntimeException("Pool Exception");
         }
     }
 

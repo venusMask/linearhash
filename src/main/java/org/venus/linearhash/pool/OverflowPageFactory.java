@@ -3,6 +3,8 @@ package org.venus.linearhash.pool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.venus.linearhash.store.MemoryPage;
 import org.venus.linearhash.store.OverflowPage;
 
@@ -16,6 +18,7 @@ import org.venus.linearhash.store.OverflowPage;
 public class OverflowPageFactory<KeyT, ValueT>
         implements PooledObjectFactory<OverflowPage<KeyT, ValueT>> {
 
+    private static final Logger logger = LoggerFactory.getLogger(OverflowPageFactory.class);
 
     @Override
     public void activateObject(PooledObject<OverflowPage<KeyT, ValueT>> p) throws Exception {

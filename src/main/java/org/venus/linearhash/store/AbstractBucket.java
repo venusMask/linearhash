@@ -43,6 +43,11 @@ public abstract class AbstractBucket<KeyT, ValueT> implements Bucket<KeyT, Value
                 newBucket.put(key, entry.getValue());
             }
         }
+        // 归还对象
+        if(overflowPage != null) {
+            context.getOverflowPool().release(overflowPage);
+            overflowPage = null;
+        }
         return newBucket;
     }
 
